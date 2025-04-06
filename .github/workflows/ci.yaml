@@ -1,0 +1,133 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - workflow
+  pull_request:
+    branches:
+      - origin  # Adjust if your default branch is named differently, e.g., master
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # You can update this if needed
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry
+          poetry install  # Installs dependencies as per pyproject.toml
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry
+          poetry install  # Install the necessary dependencies
+
+      - name: Run lint (Ruff)
+        run: |
+          source venv/bin/activate
+          poetry run ruff lint
+
+  test:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run tests with pytest
+        run: |
+          source venv/bin/activate
+          poetry run pytest
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run coverage
+        run: |
+          source venv/bin/activate
+          poetry run coverage run -m pytest
+          poetry run coverage report
+
+  mypy:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run mypy
+        run: |
+          source venv/bin/activate
+          poetry run mypy langchain_jina  # Replace with your actual package name if different
