@@ -14,6 +14,7 @@ Export your logins:
 ### 1. Get Embedings
 Here is an example usage of these classes:
 ```python
+import os
 from langchain_jina import LateChunkEmbeddings
 
 text_embeddings = LateChunkEmbeddings(
@@ -36,14 +37,14 @@ for doc in doc_result:
 
 ### 2. Build with Vectorstore
 First of all, we need the context length entire input text limit with the model context length. So, we using `tokenizer` from [transformers](https://huggingface.co/docs/transformers/en/index) to check it.
-```
+```python
 from transformers import AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("jinaai/jina-embeddings-v3")
 ```
 
 Next, when the `tokenizer` is loaded, we can combine it with any `text_splitter` LangChain. The example below giving the instruction of handle the same method of authors.
-```
+```python
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 text_splitter = RecursiveCharacterTextSplitter(
